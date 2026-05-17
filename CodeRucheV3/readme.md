@@ -1,8 +1,8 @@
-# Système Connecté pour Ruche (V2) - IoT LoRaWAN 🐝📡
+# Système Connecté pour Ruche (V3) - IoT LoRaWAN 🐝📡
 
 Ce projet est un système embarqué conçu pour surveiller les constantes vitales d'une ruche (poids et température) et transmettre ces données via le réseau LoRaWAN. Ce projet est basé sur un microcontrôleur STM32G031.
 
-## 🚀 Nouveautés et Améliorations de la V2
+## 🚀 Nouveautés et Améliorations de la V3
 
 La Version 2 apporte des correctifs majeurs de stabilité et de précision par rapport à la V1 :
 
