@@ -1,0 +1,3 @@
+../Src/lora.c:20:12:check_erreur	16	static
+../Src/lora.c:29:6:LoRa_Setup_And_Join	8	static
+../Src/lora.c:73:6:LoRa_Envoyer_Message	16	static

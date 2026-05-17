@@ -1,0 +1,5 @@
+../Src/poids.c:12:6:Poids_GPIO_Init	8	static
+../Src/poids.c:28:9:Poids_Lire_Unique	24	static
+../Src/poids.c:65:9:Poids_Lire_Moyenne	48	static
+../Src/poids.c:73:6:Poids_Tare	8	static
+../Src/poids.c:77:9:Poids_Obtenir_Valeur	8	static

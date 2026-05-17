@@ -1,0 +1,5 @@
+../Src/poids.c:12:6:Poids_GPIO_Init	1
+../Src/poids.c:28:9:Poids_Lire_Unique	6
+../Src/poids.c:65:9:Poids_Lire_Moyenne	2
+../Src/poids.c:73:6:Poids_Tare	1
+../Src/poids.c:77:9:Poids_Obtenir_Valeur	1

@@ -1,0 +1,10 @@
+../Src/onewire.c:11:6:Onewire_GPIO_Init	1
+../Src/onewire.c:17:13:Mode_Sortie	1
+../Src/onewire.c:24:13:Mode_Entree	1
+../Src/onewire.c:31:13:Onewire_WriteBit	2
+../Src/onewire.c:49:16:Onewire_ReadBit	2
+../Src/onewire.c:70:9:Onewire_Reset	2
+../Src/onewire.c:89:6:Onewire_WriteByte	2
+../Src/onewire.c:97:9:Onewire_ReadByte	3
+../Src/onewire.c:108:6:Onewire_ReadBytes	2
+../Src/onewire.c:114:7:Onewire_ConvertToCelsius	1
