@@ -23,8 +23,6 @@ La V4 repousse les limites de la précision matérielle et corrige des bugs prof
 ## 📦 Structure de la Trame de Données (Uplink)
 
 Le système envoie une chaîne hexadécimale de 16 caractères composée de deux entiers 32-bits concaténés.
-
-**Format :** `%08lX%08lX`
 1. **Les 8 premiers caractères :** La température en degrés Celsius multipliée par 10 000.
 2. **Les 8 derniers caractères :** Le poids en kilogrammes multiplié par 10 000.
 
