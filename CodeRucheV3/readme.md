@@ -1,17 +1,8 @@
-<<<<<<< HEAD
 # Système Connecté pour Ruche (V3) - IoT LoRaWAN Ultra Basse Consommation 🐝🔋
-=======
-# Système Connecté pour Ruche (V3) - IoT LoRaWAN 🐝📡
->>>>>>> f67ad8e5beb0d5e9f19ac4ee34b2b74e65e02a9c
 
 Ce projet est un système embarqué autonome conçu pour surveiller les constantes vitales d'une ruche (poids et température) et transmettre ces données via le réseau LoRaWAN. Basée sur un STM32G031, cette **Version 3** est l'aboutissement du projet, optimisée pour un déploiement réel en pleine nature avec une gestion avancée de l'énergie.
 
-<<<<<<< HEAD
-## 🚀 Nouveautés Majeures de la V3
-=======
 ## 🚀 Nouveautés et Améliorations de la V3
->>>>>>> f67ad8e5beb0d5e9f19ac4ee34b2b74e65e02a9c
-
 La V3 se concentre intégralement sur l'optimisation énergétique:
 
 * **Deep Sleep (Stop 1 Mode - 100% Safe) :** Remplacement des délais bloquants par une véritable mise en veille profonde du microcontrôleur entre deux envois. Le système utilise le timer basse consommation (LPTIM1) cadencé par l'horloge LSI (32 kHz) et un réveil par événement (`__WFE()`) pour éviter les crashs d'interruption.
@@ -60,4 +51,3 @@ Bien que cette V2 soit plus robuste, elle nécessite encore des optimisations po
 
 1. **Gestion de l'énergie (Deep Sleep) :** Remplacer le `SYSTICK_Delay()` bloquant par une véritable mise en veille du microcontrôleur (mode Stop ou Standby) couplée à une alarme RTC.
 2. **Payload Binaire :** Remplacer l'envoi de chaînes hexadécimales (`AT+CMSGHEX`) par un envoi binaire pur pour réduire drastiquement le "Time on Air" (temps d'émission radio) et économiser la batterie.
->>>>>>> f67ad8e5beb0d5e9f19ac4ee34b2b74e65e02a9c
