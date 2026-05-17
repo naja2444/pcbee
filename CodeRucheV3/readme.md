@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 # Système Connecté pour Ruche (V3) - IoT LoRaWAN Ultra Basse Consommation 🐝🔋
+=======
+# Système Connecté pour Ruche (V3) - IoT LoRaWAN 🐝📡
+>>>>>>> f67ad8e5beb0d5e9f19ac4ee34b2b74e65e02a9c
 
 Ce projet est un système embarqué autonome conçu pour surveiller les constantes vitales d'une ruche (poids et température) et transmettre ces données via le réseau LoRaWAN. Basée sur un STM32G031, cette **Version 3** est l'aboutissement du projet, optimisée pour un déploiement réel en pleine nature avec une gestion avancée de l'énergie.
 
+<<<<<<< HEAD
 ## 🚀 Nouveautés Majeures de la V3
+=======
+## 🚀 Nouveautés et Améliorations de la V3
+>>>>>>> f67ad8e5beb0d5e9f19ac4ee34b2b74e65e02a9c
 
 La V3 se concentre intégralement sur l'optimisation énergétique:
 
@@ -39,5 +47,17 @@ Le système envoie une chaîne hexadécimale de 16 caractères composée de deux
    * `LORA_APP_EUI`
    * `LORA_APP_KEY`
    * `LORA_DEV_EUI`
+<<<<<<< HEAD
 2. **Calibration de la Balance :** Dans le fichier `main.c`, ajustez la macro `#define FACTEUR_CALIBRATION` (actuellement `10764.17f`) avec le facteur multiplicateur de votre propre cellule de charge.
 3. **Tare Automatique :** Le système effectue une Tare (mise à zéro) automatique au démarrage. Assurez-vous que la balance est vide lors de la mise sous tension.
+=======
+2. **Calibration de la Balance :** Remplacez la valeur de `#define FACTEUR_CALIBRATION` (actuellement `10750.0f`) dans `main.c` par la valeur correspondant à votre propre cellule de charge.
+3. **Délai d'envoi :** À la fin de `main.c`, ajustez la valeur de `SYSTICK_Delay()`. Elle est actuellement réglée sur 30 secondes (`30000`) pour les tests, mais doit être passée à 1 heure (`3600000`) pour le déploiement sur la ruche.
+
+## 🚧 Pistes d'Amélioration (Vers la V3)
+
+Bien que cette V2 soit plus robuste, elle nécessite encore des optimisations pour un déploiement autonome de longue durée :
+
+1. **Gestion de l'énergie (Deep Sleep) :** Remplacer le `SYSTICK_Delay()` bloquant par une véritable mise en veille du microcontrôleur (mode Stop ou Standby) couplée à une alarme RTC.
+2. **Payload Binaire :** Remplacer l'envoi de chaînes hexadécimales (`AT+CMSGHEX`) par un envoi binaire pur pour réduire drastiquement le "Time on Air" (temps d'émission radio) et économiser la batterie.
+>>>>>>> f67ad8e5beb0d5e9f19ac4ee34b2b74e65e02a9c
