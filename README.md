@@ -1,4 +1,4 @@
-# pcbee
+# PCBEE
 projet de L3 ESET groupe 2
 
 ## 👥 Équipe
