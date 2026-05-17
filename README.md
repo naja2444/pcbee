@@ -12,7 +12,7 @@ projet de L3 ESET groupe 2
 
 **Formation :** L3 ESET — Électronique Systèmes Embarqués et Télécommunications 
 **Université :** Savoie Mont Blanc  
-**Encadrants :** Sylvain Montagny - Cedric Bermond - Jean-François Roux
+**Encadrants :** Sylvain Montagny - Cedric Bermond - Jean-François Roux - Bernard Flechet
 
 ---
 
