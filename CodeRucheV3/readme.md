@@ -25,8 +25,6 @@ La V3 se concentre intégralement sur l'optimisation énergétique:
 ## 📦 Structure de la Trame de Données (Uplink)
 
 Le système envoie une chaîne hexadécimale de 16 caractères composée de deux entiers 32-bits concaténés.
-
-**Format :** `%08lX%08lX`
 1. **Les 8 premiers caractères :** La température en degrés Celsius multipliée par 10 000.
 2. **Les 8 derniers caractères :** Le poids en kilogrammes multiplié par 10 000.
 
@@ -38,12 +36,11 @@ Le système envoie une chaîne hexadécimale de 16 caractères composée de deux
    * `LORA_APP_EUI`
    * `LORA_APP_KEY`
    * `LORA_DEV_EUI`
-<<<<<<< HEAD
+
 2. **Calibration de la Balance :** Dans le fichier `main.c`, ajustez la macro `#define FACTEUR_CALIBRATION` (actuellement `10764.17f`) avec le facteur multiplicateur de votre propre cellule de charge.
 3. **Tare Automatique :** Le système effectue une Tare (mise à zéro) automatique au démarrage. Assurez-vous que la balance est vide lors de la mise sous tension.
-=======
-2. **Calibration de la Balance :** Remplacez la valeur de `#define FACTEUR_CALIBRATION` (actuellement `10750.0f`) dans `main.c` par la valeur correspondant à votre propre cellule de charge.
-3. **Délai d'envoi :** À la fin de `main.c`, ajustez la valeur de `SYSTICK_Delay()`. Elle est actuellement réglée sur 30 secondes (`30000`) pour les tests, mais doit être passée à 1 heure (`3600000`) pour le déploiement sur la ruche.
+4. **Calibration de la Balance :** Remplacez la valeur de `#define FACTEUR_CALIBRATION` (actuellement `10750.0f`) dans `main.c` par la valeur correspondant à votre propre cellule de charge.
+5. **Délai d'envoi :** À la fin de `main.c`, ajustez la valeur de `SYSTICK_Delay()`. Elle est actuellement réglée sur 30 secondes (`30000`) pour les tests, mais doit être passée à 1 heure (`3600000`) pour le déploiement sur la ruche.
 
 ## 🚧 Pistes d'Amélioration (Vers la V3)
 
