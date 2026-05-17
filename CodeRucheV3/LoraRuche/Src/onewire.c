@@ -1,95 +1,96 @@
 #include "onewire.h"
-#include "timer.h" // Importation de la fonction de temporisation Delai_us
+#include "timer.h" // Importation de la base de temps haute résolution (Delai_us)
 #include <stm32g031xx.h>
 
-/* Assignation matérielle de l'interface OneWire (Port B, Pin 0) */
+/* Assignation matérielle de l'interface OneWire (Port B, Broche 0) */
 #define PORT_ONEWIRE GPIOB
 #define PIN_ONEWIRE  0
 
 /* Fonctions privées de configuration matérielle (Couche Physique) */
 
 void Onewire_GPIO_Init(void) {
+    // Activation conditionnelle de l'horloge du périphérique de port
     RCC->IOPENR |= RCC_IOPENR_GPIOBEN;
 }
 
-// Configuration de la broche en mode Sortie avec topologie Open-Drain
+// Configuration de la ligne de données en mode Sortie (Topologie Open-Drain)
 static void Mode_Sortie(void) {
-    PORT_ONEWIRE->MODER &= ~(GPIO_MODER_MODE0_1); // Effacement du bit de mode supérieur
-    PORT_ONEWIRE->MODER |=  (GPIO_MODER_MODE0_0); // Définition du mode de sortie (01)
-    PORT_ONEWIRE->OTYPER |= (1 << PIN_ONEWIRE);   // Activation du drain ouvert (Open-Drain, protection matérielle)
+    PORT_ONEWIRE->MODER &= ~(GPIO_MODER_MODE0_1); // Effacement du bit supérieur de configuration
+    PORT_ONEWIRE->MODER |=  (GPIO_MODER_MODE0_0); // Assignation du mode de sortie (01)
+    PORT_ONEWIRE->OTYPER |= (1 << PIN_ONEWIRE);   // Activation du drain ouvert (protection contre les courts-circuits)
 }
 
-// Configuration de la broche en mode Entrée (Haute impédance)
+// Configuration de la ligne de données en mode Entrée (Haute Impédance)
 static void Mode_Entree(void) {
-    PORT_ONEWIRE->MODER &= ~(GPIO_MODER_MODE0_0 | GPIO_MODER_MODE0_1); // Réinitialisation du registre de mode (00)
+    PORT_ONEWIRE->MODER &= ~(GPIO_MODER_MODE0_0 | GPIO_MODER_MODE0_1); // Assignation du mode entrée (00)
 }
 
-/* Implémentation du chronogramme OneWire (Gestion des créneaux temporels) */
+/* Implémentation du chronogramme OneWire (Séquençage temporel) */
 
-// Transmission sérielle d'un niveau logique unitaire
+// Émission d'un état logique unitaire sur le bus
 static void Onewire_WriteBit(uint8_t bit) {
     Mode_Sortie();
-    PORT_ONEWIRE->ODR &= ~(1 << PIN_ONEWIRE); // Forçage de la ligne à l'état logique bas
+    PORT_ONEWIRE->ODR &= ~(1 << PIN_ONEWIRE); // Forçage du signal à l'état logique bas
 
     if (bit) {
-        // Séquence de génération d'un bit logique '1'
-        Delai_us(6);       // Impulsion de synchronisation (durée minimale)
-        Mode_Entree();     // Libération du bus (traction au niveau haut par résistance externe)
-        Delai_us(64);      // Temporisation de fin de créneau temporel (Time Slot)
+        // Profil temporel pour l'émission d'un bit logique '1'
+        Delai_us(6);       // Impulsion d'initialisation de séquence
+        Mode_Entree();     // Libération de la ligne (traction au niveau haut par résistance externe)
+        Delai_us(64);      // Temporisation de maintien
     } else {
-        // Séquence de génération d'un bit logique '0'
-        Delai_us(60);      // Maintien prolongé à l'état bas (dominance du signal)
-        Mode_Entree();     // Libération du bus
-        Delai_us(10);
+        // Profil temporel pour l'émission d'un bit logique '0'
+        Delai_us(60);      // Forçage prolongé à l'état bas (dominance du signal initiateur)
+        Mode_Entree();     // Libération de la ligne
+        Delai_us(10);      // Délai de recouvrement
     }
 }
 
-// Échantillonnage d'un niveau logique unitaire émis par le périphérique esclave
+// Échantillonnage d'un état logique unitaire émis par le périphérique cible
 static uint8_t Onewire_ReadBit(void) {
     uint8_t bit_lu = 0;
 
     Mode_Sortie();
-    PORT_ONEWIRE->ODR &= ~(1 << PIN_ONEWIRE); // Génération du signal de synchronisation initiateur
+    PORT_ONEWIRE->ODR &= ~(1 << PIN_ONEWIRE); // Impulsion de synchronisation maître
     Delai_us(6);
 
-    Mode_Entree(); // Transition en haute impédance pour autoriser la transmission esclave
-    Delai_us(9);   // Délai de propagation et de stabilisation du signal
+    Mode_Entree(); // Transition en haute impédance pour autoriser l'émission esclave
+    Delai_us(9);   // Temporisation de stabilisation capacitive de la ligne
 
-    // Échantillonnage de l'état du registre de données d'entrée (IDR)
+    // Échantillonnage conditionnel de l'état du registre d'entrée matérielle
     if (PORT_ONEWIRE->IDR & (1 << PIN_ONEWIRE)) {
         bit_lu = 1;
     }
 
-    Delai_us(55); // Attente de la complétion du créneau de lecture (Read Time Slot)
+    Delai_us(55); // Temporisation de clôture du créneau de lecture (Read Time Slot)
     return bit_lu;
 }
 
-/* Fonctions publiques d'interface de bus (Couche Liaison de Données) */
+/* Fonctions publiques d'interface de bus (Couche Application) */
 
 uint8_t Onewire_Reset(void) {
     uint8_t presence = 0;
 
     Mode_Sortie();
     PORT_ONEWIRE->ODR &= ~(1 << PIN_ONEWIRE); // Forçage du bus à l'état bas
-    Delai_us(480); // Génération du signal de réinitialisation (Reset Pulse : 480µs)
+    Delai_us(480); // Génération de l'impulsion de réinitialisation (Reset Pulse : 480µs)
 
     Mode_Entree(); // Libération du bus
-    Delai_us(70);  // Temporisation d'attente du signal de présence (Presence Pulse)
+    Delai_us(70);  // Attente du créneau de réponse esclave
 
-    // Évaluation de la réponse de l'esclave (Acknowledge) : ligne maintenue à l'état bas
+    // Évaluation de l'impulsion de présence (Presence Pulse)
     if (!(PORT_ONEWIRE->IDR & (1 << PIN_ONEWIRE))) {
         presence = 1;
     }
 
-    Delai_us(410); // Clôture du cycle de synchronisation d'initialisation
+    Delai_us(410); // Clôture de la séquence d'initialisation
     return presence;
 }
 
 void Onewire_WriteByte(uint8_t octet) {
     for (int i = 0; i < 8; i++) {
-        // Séquentialisation de la transmission (LSB First selon spécification standard)
+        // Sérialisation LSB-First (Convention protocolaire Maxim/Dallas)
         Onewire_WriteBit(octet & 0x01);
-        octet >>= 1; // Décalage logique à droite
+        octet >>= 1; // Décalage logique de registre
     }
 }
 
@@ -98,7 +99,7 @@ uint8_t Onewire_ReadByte(void) {
     for (int i = 0; i < 8; i++) {
         octet >>= 1;
         if (Onewire_ReadBit()) {
-            octet |= 0x80; // Reconstruction de l'octet via assignation séquentielle du MSB
+            octet |= 0x80; // Reconstruction de l'octet via assignation du bit de poids fort (MSB)
         }
     }
     return octet;
@@ -111,8 +112,8 @@ void Onewire_ReadBytes(uint8_t *buffer, uint8_t longueur) {
 }
 
 float Onewire_ConvertToCelsius(uint8_t *donnees) {
-    // Reconstruction du mot de 16 bits contenant la donnée thermique brute (LSB et MSB)
+    // Concaténation des registres LSB et MSB pour recomposer la donnée brute
     int16_t temp_brute = (donnees[1] << 8) | donnees[0];
-    // Application de la résolution matérielle du convertisseur intégré (0.0625°C/bit en résolution 12-bit)
+    // Application de la constante de résolution matérielle (0.0625°C par bit pour une configuration 12-bit)
     return (float)temp_brute / 16.0f;
 }

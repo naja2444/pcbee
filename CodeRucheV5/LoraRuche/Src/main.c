@@ -9,9 +9,7 @@
 #include "poids.h"
 #include "gpio.h"
 
-/* Constante d'étalonnage linéaire obsolète (Remplacée par l'approximation polynomiale absolue) */
-
-// Variable d'état maintenue volatile pour supervision externe via interface de débogage (Live Expressions)
+// Variable d'état maintenue volatile pour supervision externe (Debug/Live Expressions)
 volatile int32_t poids_brut = 0;
 
 int main(void) {
@@ -36,13 +34,15 @@ int main(void) {
     }
 
     /* 2. SÉQUENCE D'ÉTALONNAGE ET D'ASSOCIATION RÉSEAU */
-    // Poids_Initialiser_Tare(); // Note d'architecture : Désactivé. La compensation d'offset (tare) est 
-                                 // intrinsèquement gérée par la constante 'c' du polynôme de calibration.
+    // Note d'architecture : Désactivé. La compensation d'offset (tare) est 
+    // intrinsèquement gérée par la constante 'c' du polynôme de calibration.
+    // Poids_Initialiser_Tare(); 
     LoRa_Setup_And_Join();
 
     /* Allocation des variables d'état et de traitement */
     uint8_t tempo[9];
     float temperature_lue = 0.0;
+
     volatile float poids_kg = 0.0;
     char message_hex[32];
     char debug_buffer[80];
@@ -52,11 +52,8 @@ int main(void) {
             /* ============================================
                PHASE DE RÉVEIL OPÉRATIONNEL (WAKE-UP)
                ============================================ */
-            // Réactivation du convertisseur A/N HX711 (Transition de la broche SCK à l'état logique bas sur PA15)
-            GPIOA->ODR &= ~(1 << 15); 
-            
-            // Interruption du mode basse consommation du modem LoRa via transmission série (Dummy signal)
-            UART_envoie_chaine("AT\r\n"); 
+            GPIOA->ODR &= ~(1 << 15); // Réactivation du convertisseur A/N HX711 (Transition de la broche SCK à l'état logique bas sur PA15)
+            UART_envoie_chaine("AT\r\n"); // Interruption du mode basse consommation du modem LoRa via transmission série (Dummy signal)
             SYSTICK_Delay(100);       // Délai de rétablissement de l'oscillateur du modem radio
             GPIOC->ODR |= (1 << 6);   // Activation du témoin de cycle (LED ON)
 

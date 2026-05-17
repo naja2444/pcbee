@@ -1,44 +1,40 @@
-# Système Connecté pour Ruche (V4) - IoT LoRaWAN, Calibration Avancée & Anti-Fuite 🐝🔬
+# Système Connecté pour Ruche (V5) - IoT LoRaWAN, Autonomie Extrême & Version Finale 🐝🚀
 
-Ce projet est un système embarqué autonome conçu pour surveiller les constantes vitales d'une ruche (poids et température) et transmettre ces données via le réseau LoRaWAN. Basée sur un microcontrôleur STM32G031, cette **Version 4** introduit des algorithmes de calibration mathématique complexes et résout des problématiques critiques de fuites de courant en veille profonde.
+Ce projet est un système embarqué autonome conçu pour surveiller les constantes vitales d'une ruche (poids et température) et transmettre ces données via le réseau LoRaWAN. Basée sur un microcontrôleur STM32G031, cette **Version 5** représente l'aboutissement du code pour un déploiement en production, combinant une calibration mathématique absolue, des délais de communication drastiquement réduits, et une protection maximale contre les crashs matériels.
 
-## 🚀 Nouveautés Majeures de la V4 (Précision & Stabilité)
+## 🌟 Nouveautés et Optimisations de la V5 (Production-Ready)
 
-La V4 repousse les limites de la précision matérielle et corrige des bugs profonds de micro-électronique :
+La V5 compile toutes les sécurités des versions précédentes en poussant l'optimisation énergétique à son maximum :
 
-* **Calibration Polynomiale (Mode Expert) :** Abandon de la simple calibration linéaire et de la tare au démarrage. Le poids est désormais calculé via une équation polynomiale du second degré ($y = ax^2 + bx + c$) dérivée d'un étalonnage sur Excel. Le coefficient `c` gère intrinsèquement la tare de la balance (le "zéro").
-* **Sécurité Anti-Fuite (OneWire) :** Pour éliminer les fuites de courant résiduelles (qui vidaient la batterie à petit feu), la broche de données du capteur de température (PB0) est reconfigurée en mode "Entrée" (Haute Impédance) juste avant l'endormissement du STM32.
-* **Correctifs "Coma" et "Minute Sautée" (Stop Mode) :** Le timer de réveil (LPTIM1) a été patché au niveau matériel. Des boucles d'attente ont été ajoutées pour garantir que les drapeaux d'interruption sont physiquement effacés avant de lancer l'instruction d'endormissement `__WFE()`, évitant ainsi que le STM32 ne se fige indéfiniment.
-* **Optimisation de la Radio LoRa :** Utilisation de la commande `AT+LOWPOWER` pour forcer le module en veille ultra-profonde. De plus, la fonction d'envoi a été allégée pour ne plus écouter les fenêtres de réception (Downlink), ce qui réduit drastiquement la consommation énergétique de la transmission.
+* **Envoi "Aveugle" (Zéro Downlink) :** La fonction `LoRa_Envoyer_Message` a été re-conçue pour effectuer un "envoi unique sans lecture de downlink". Le système n'attend plus que la simple confirmation de transmission (`Done`) pendant 2 secondes maximum avant de se rendormir, ce qui coupe radicalement la consommation radio.
+* **Démarrage TTN Ultra-Rapide :** Les temps d'attente (timeouts) lors de la configuration du module LoRa (AT+MODE, AT+DR, AT+CLASS, et l'injection des clés) ont été abaissés à seulement 300 ms au lieu des délais standards. 
+* **Calibration Polynomiale Hardcodée :** Le système de tare physique (`Poids_Initialiser_Tare()`) a été explicitement désactivé dans la séquence de démarrage. Le poids est désormais exclusivement géré par un polynôme du second degré ($y = ax^2 + bx + c$) calculé en temps réel sur les valeurs brutes. Les coefficients `a`, `b` et le décalage du zéro `c` sont intégrés directement dans la boucle de traitement.
+* **Stabilité du Deep Sleep (Correctifs Matériels) :** La mise en veille utilise le mode `Stop` via le timer LPTIM1 et l'instruction `__WFE()`. Deux correctifs critiques sont intégrés : un délai d'environ 60 µs (boucle de 1000 itérations) pour éviter un "coma" au réveil, et une boucle de synchronisation matérielle pour éviter le bug de la "minute sautée" dû à l'horloge lente de 32kHz.
+* **Protection Anti-Fuite (OneWire) :** Avant de passer en mode veille profonde, la broche PB0 du capteur de température est automatiquement reconfigurée en mode Entrée (Haute Impédance) afin d'éviter toute perte de courant via la résistance de tirage.
 
 ## 🛠️ Architecture Matérielle
 
-| Composant | Rôle | Connexion STM32 | État en Veille |
+| Composant | Rôle | Connexion STM32 | Gestion de l'énergie |
 | :--- | :--- | :--- | :--- |
-| **STM32G031** | Cerveau & Calcul Polynôme | N/A | Mode Stop (LPTIM1 actif) |
-| **DS18B20** | Capteur de Température | **PB0** (Data) | Broche isolée (High-Z) |
-| **HX711** | Convertisseur A/N (Poids) | **PB1** (DT), **PA15** (SCK) | Mode Power Down (SCK=1) |
-| **Module LoRa** | Transmission Radio | **USART1** (TX/RX) | AT+LOWPOWER |
+| **STM32G031** | Microcontrôleur principal | N/A | Mode Stop (LPTIM1 via horloge LSI) |
+| **DS18B20** | Capteur de Température | **PB0** (Data) | Basculement en Mode Entrée avant veille |
+| **HX711** | Convertisseur A/N (Poids) | **PB1** (DT), **PA15** (SCK) | Extinction forcée (SCK à 1) avant veille |
+| **Module LoRa** | Transmission Radio | **USART1** (TX/RX) | Mode `AT+LOWPOWER` forcé avant veille |
 
-## 📦 Structure de la Trame de Données (Uplink)
+## 📦 Format des Données Transmises (Payload LoRa)
 
-Le système envoie une chaîne hexadécimale de 16 caractères composée de deux entiers 32-bits concaténés.
+Le système envoie une trame simplifiée et compacte sous la forme d'une chaîne hexadécimale de 16 caractères de long.
 
-**Format :** `%08lX%08lX`
-1. **Les 8 premiers caractères :** La température en degrés Celsius multipliée par 10 000.
-2. **Les 8 derniers caractères :** Le poids en kilogrammes multiplié par 10 000.
+**Format de la chaîne :** `%08lX%08lX`
+1. **Les 8 premiers caractères :** Représentent la température brute en degrés Celsius multipliée par 10 000 et convertie en entier 32-bits.
+2. **Les 8 derniers caractères :** Représentent le poids calculé en kilogrammes multiplié par 10 000 et converti en entier 32-bits.
 
-## 🧮 Configuration de la Calibration (Polynôme)
+*(Une sécurité logicielle garantit que le poids envoyé n'est jamais inférieur à 0.0 kg)*.
 
-Étant donné que cette version utilise un algorithme de lissage polynomial, la configuration ne se fait plus via une simple variable, mais en modifiant les trois coefficients `a`, `b` et `c` directement dans le fichier `main.c`.
+## ⚙️ Configuration pour le Déploiement
 
-1. Obtenez les valeurs brutes du HX711 pour plusieurs poids connus en utilisant la fonction `Poids_Lire_Brut_Pur()`.
-2. Tracez une courbe de tendance polynomiale d'ordre 2 sur Excel.
-3. Reportez les valeurs générées dans les variables `a`, `b`, et `c`. Le coefficient `c` déterminera automatiquement le point zéro de la balance (pas de tare manuelle requise).
+Pour déployer ce code sur une nouvelle ruche, seules trois zones doivent être modifiées :
 
-## ⚙️ Configuration Réseau (TTN)
-
-Les identifiants Over-The-Air Activation (OTAA) doivent être renseignés dans le fichier `lora.c` :
-* `LORA_APP_EUI` : Identifiant de l'application.
-* `LORA_APP_KEY` : Clé de session cryptographique.
-* `LORA_DEV_EUI` : Identifiant unique du composant physique.
+1. **Clés LoRaWAN TTN :** Remplacez les constantes `LORA_APP_EUI`, `LORA_APP_KEY`, et `LORA_DEV_EUI` dans le fichier `lora.c`.
+2. **Coefficients de la Balance :** Dans la boucle principale de `main.c`, modifiez les variables `a` (actuellement `-6.76251e-12`), `b` (actuellement `9.74269e-05`) et `c` (actuellement `-8.19810`) pour qu'elles correspondent à la courbe de calibration de votre cellule de charge.
+3. **Fréquence de Transmission :** Ajustez le paramètre de la fonction `Dormir_X_Secondes_Stop_Mode(30)` à la fin du `main.c` (actuellement réglé sur 30 secondes pour les tests, à augmenter pour la production).

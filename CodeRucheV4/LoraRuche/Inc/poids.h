@@ -15,4 +15,8 @@ void Poids_Tare(void);
 // Récupère la valeur calibrée (Valeur - Tare)
 int32_t Poids_Obtenir_Valeur(void);
 
+void Poids_Initialiser_Tare(void);
+void Sauvegarder_Tare_Flash(int32_t tare_a_sauver); // Optionnel si tu veux l'appeler ailleurs
+int32_t Poids_Lire_Brut_Pur(void);
+
 #endif

@@ -1,8 +1,0 @@
-D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Drivers/CMSIS/Include/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
-D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Drivers/CMSIS/Include/core_cm0plus.h:1056:26:SysTick_Config	16	static
-../Src/timer.c:10:6:SYSTICK_Init	8	static
-../Src/timer.c:14:6:SYSTICK_Delay	24	static
-../Src/timer.c:22:10:SYSTICK_Get	8	static
-../Src/timer.c:30:6:Timer_Init_Microsecondes	8	static
-../Src/timer.c:46:6:Delai_us	24	static
-../Src/timer.c:59:6:Dormir_X_Secondes_Stop_Mode	24	static,ignoring_inline_asm

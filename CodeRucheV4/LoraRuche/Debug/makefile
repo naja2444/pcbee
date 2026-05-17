@@ -59,8 +59,8 @@ all: main-build
 main-build: LoraRuche.elf secondary-outputs
 
 # Tool invocations
-LoraRuche.elf LoraRuche.map: $(OBJS) $(USER_OBJS) D:\Users\user\Downloads\LoraRucheV2\LoraRuche2\STM32G031K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "LoraRuche.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"D:\Users\user\Downloads\LoraRucheV2\LoraRuche2\STM32G031K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LoraRuche.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LoraRuche.elf LoraRuche.map: $(OBJS) $(USER_OBJS) D:\Users\user\Music\LoraRucheV3_veille\LoraRuche2\STM32G031K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "LoraRuche.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"D:\Users\user\Music\LoraRucheV3_veille\LoraRuche2\STM32G031K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LoraRuche.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

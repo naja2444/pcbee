@@ -1,8 +1,0 @@
-../Src/poids.c:13:6:Poids_GPIO_Init	1
-../Src/poids.c:30:9:Poids_Lire_Unique	6
-../Src/poids.c:66:9:Poids_Lire_Moyenne	2
-../Src/poids.c:75:9:Poids_Lire_Brut_Pur	1
-../Src/poids.c:79:6:Poids_Tare	1
-../Src/poids.c:83:9:Poids_Obtenir_Valeur	1
-../Src/poids.c:90:6:Sauvegarder_Tare_Flash	5
-../Src/poids.c:114:6:Poids_Initialiser_Tare	2

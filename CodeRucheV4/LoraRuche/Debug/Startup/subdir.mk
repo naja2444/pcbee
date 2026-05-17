@@ -16,7 +16,7 @@ S_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Startup/%.o: ../Startup/%.s Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m0plus -g3 -DDEBUG -c -I"D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Drivers" -I"D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Inc" -I"D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Src" -I"D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Drivers/CMSIS/Device/ST/STM32G0xx/Include" -I"D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Drivers/CMSIS/Include" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m0plus -g3 -DDEBUG -c -I"D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Drivers" -I"D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Inc" -I"D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Src" -I"D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Drivers/CMSIS/Device/ST/STM32G0xx/Include" -I"D:/Users/user/Music/LoraRucheV3_veille/LoraRuche2/Drivers/CMSIS/Include" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
 
 clean: clean-Startup
 

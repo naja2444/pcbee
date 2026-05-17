@@ -17,8 +17,6 @@ char cmd_buffer[128];     // Tampon de formatage des commandes AT (Tx)
 #define LORA_DEV_EUI "2CF7F120510013D4"
 
 /* Fonctions utilitaires privées */
-
-// Évaluation de la présence d'un code d'erreur matériel ou protocolaire
 static int check_erreur(const char* buffer) {
     if (strstr(buffer, "ERROR") != NULL) {
         return 1;

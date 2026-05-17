@@ -1,7 +1,8 @@
-D:/Users/user/Documents/LoraRuche/Drivers/CMSIS/Include/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
-D:/Users/user/Documents/LoraRuche/Drivers/CMSIS/Include/core_cm0plus.h:1056:26:SysTick_Config	16	static
-../Src/timer.c:8:6:SYSTICK_Init	8	static
-../Src/timer.c:12:6:SYSTICK_Delay	24	static
-../Src/timer.c:20:10:SYSTICK_Get	8	static
-../Src/timer.c:28:6:Timer_Init_Microsecondes	8	static
-../Src/timer.c:44:6:Delai_us	24	static
+D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Drivers/CMSIS/Include/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
+D:/Users/user/Downloads/LoraRucheV2/LoraRuche2/Drivers/CMSIS/Include/core_cm0plus.h:1056:26:SysTick_Config	16	static
+../Src/timer.c:10:6:SYSTICK_Init	8	static
+../Src/timer.c:14:6:SYSTICK_Delay	24	static
+../Src/timer.c:22:10:SYSTICK_Get	8	static
+../Src/timer.c:30:6:Timer_Init_Microsecondes	8	static
+../Src/timer.c:46:6:Delai_us	24	static
+../Src/timer.c:64:6:Dormir_X_Secondes_Stop_Mode	16	static,ignoring_inline_asm

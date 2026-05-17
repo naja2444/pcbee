@@ -23,6 +23,8 @@ uint32_t SYSTICK_Get(void){
 	return ticks;
 }
 
+/* Base de temps dédiée aux périphériques synchrones critiques */
+
 /* ==============================================================
    GESTION DES BASES DE TEMPS HAUTE RÉSOLUTION (Périphérique TIM3)
    ============================================================== */
@@ -99,7 +101,7 @@ void Dormir_X_Secondes_Stop_Mode(uint32_t secondes) {
         // Attente active garantissant que le domaine d'horloge LSI (très lent) a physiquement 
         // pris en compte la demande de purge émise par le domaine APB (très rapide).
         while (LPTIM1->ISR & LPTIM_ISR_ARRM) {
-            // Boucle de synchronisation des bus...
+            // Attente de synchronisation matérielle...
         }
 
         // Application de la consigne temporelle pour l'itération courante

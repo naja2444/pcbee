@@ -13,4 +13,6 @@ void Timer_Init_Microsecondes(void);
 // Attend un nombre précis de microsecondes (blocant)
 void Delai_us(uint32_t us);
 
+void Dormir_X_Secondes_Stop_Mode(uint32_t secondes);
+
 #endif

@@ -8,7 +8,7 @@ extern void UART_envoie_chaine(const char* str);
 extern void UART_LireReponse_AvecDelai(char* buffer, int buffer_taille, uint32_t timeout_ms);
 
 /* Allocation des tampons de communication (Buffers USART) */
-char rx_buffer_lora[128]; // Tampon de réception (Rx)
+char rx_buffer_lora[256]; // Tampon de réception série (Rx)
 char cmd_buffer[128];     // Tampon de formatage des commandes AT (Tx)
 
 /* Identifiants d'approvisionnement réseau LoRaWAN (TTN - Méthode OTAA) */
@@ -31,7 +31,7 @@ static int check_erreur(const char* buffer) {
 void LoRa_Setup_And_Join(void) {
     /* 1. Configuration des paramètres physiques MAC (Délais de scrutation optimisés) */
     UART_envoie_chaine("AT+MODE=LWOTAA\r\n");
-    // Configuration du délai d'attente de réponse du modem (Timeout: 300ms)
+    // Configuration du délai d'attente de réponse du modem (Timeout réduit à 300ms)
     UART_LireReponse_AvecDelai(rx_buffer_lora, sizeof(rx_buffer_lora), 300);
     if (check_erreur(rx_buffer_lora)) { while(1); } // Exception matérielle : Interruption du flux d'exécution
 
@@ -72,31 +72,15 @@ void LoRa_Setup_And_Join(void) {
     }
 }
 
-/* 4. Séquence de transmission (Uplink) et écoute de la fenêtre de réception (Downlink) */
-uint32_t LoRa_Envoyer_Message(const char* message_hex) {
-    // 1. Encapsulation et transmission de la charge utile (Payload)
+/* 4. Séquence de transmission aveugle (Uplink Only - Zéro Downlink) */
+void LoRa_Envoyer_Message(const char* message_hex) {
+    // 1. Purge du tampon de réception pour éviter toute corruption de mémoire
+    memset(rx_buffer_lora, 0, sizeof(rx_buffer_lora));
+
+    // 2. Encapsulation et transmission de la charge utile (Payload)
     sprintf(cmd_buffer, "AT+CMSGHEX=\"%s\"\r\n", message_hex);
     UART_envoie_chaine(cmd_buffer);
 
-    // 2. Attente de l'acquittement et scrutation des fenêtres de réception RX1/RX2 (Timeout: 15s)
-    UART_LireReponse_AvecDelai(rx_buffer_lora, sizeof(rx_buffer_lora), 15000);
-
-    /* 3. Extraction de la charge utile descendante (Downlink Payload) via parsing de l'acquittement */
-    char* ptr_rx = strstr(rx_buffer_lora, "RX: \"");
-
-    if (ptr_rx != NULL) {
-        // Décalage du pointeur pour isoler le premier octet significatif de la trame reçue
-        ptr_rx += 5;
-
-        unsigned int nouvelle_valeur_minutes = 0;
-
-        // Décodage hexadécimal de l'octet de configuration
-        if (sscanf(ptr_rx, "%02X", &nouvelle_valeur_minutes) == 1) {
-            // Conversion de la consigne temporelle (minutes en secondes)
-            return (nouvelle_valeur_minutes * 60);
-        }
-    }
-
-    // Valeur de retour nulle en cas d'absence de données descendantes ou d'erreur de trame
-    return 0;
+    // 3. Attente stricte de l'acquittement de transmission (Done) sans scrutation des fenêtres RX (Timeout: 2s)
+    UART_LireReponse_AvecDelai(rx_buffer_lora, sizeof(rx_buffer_lora), 2000);
 }
