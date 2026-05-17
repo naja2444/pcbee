@@ -82,6 +82,6 @@ Ce dépôt regroupe l'ensemble du code et fichiers du projet réalisés. L'objec
 
 -  Les documents sont dans le canal Teams avec les formats préconisés.
 
-§  Le système tourne depuis au moins 3 semaines pour garantir son fonctionnement.
+-  Le système tourne depuis au moins 3 semaines pour garantir son fonctionnement.
 
-§  Le Device LoRaWAN final à été provisionné dans l'application fournie par M Montagny.
+-  Le Device LoRaWAN final à été provisionné dans l'application fournie par M Montagny.
